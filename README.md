@@ -30,6 +30,8 @@ The dataset used for this project was obtained from **Roboflow Universe**:
 | Validation | 992    |
 | Test       | 512    |
 
+The dataset consists of traffic images annotated with bounding boxes for helmet detection.
+
 ### Classes in Dataset
 
 The original dataset contains three classes:
@@ -38,14 +40,14 @@ The original dataset contains three classes:
 - `Without Helmet`
 - `Two Wheeler`
 
-However, the objective of this project was specifically to detect helmet usage. The `two_wheeler` class was not required for the final objective and often produced overlapping detections with helmet-related predictions.
+However, the objective of this project is specifically to detect helmet usage. The `two_wheeler` class was not required for the final objective and often caused overlapping detections with helmet-related predictions.
 
-Therefore, during inference the `two_wheeler` class is filtered out so that the system focuses only on:
+Therefore, during inference the `two_wheeler` class was filtered out, allowing the system to focus only on:
 
 - `Helmet`
 - `Without Helmet`
 
-This ensures the detection output directly reflects helmet usage.
+This improves the clarity of detection results and aligns the output with the project objective.
 
 ---
 
@@ -71,16 +73,16 @@ Advantages of YOLOv11s:
 
 The model was trained using the **Ultralytics YOLO framework**.
 
-| Parameter              | Value               |
-|------------------------|---------------------|
-| Model                  | YOLOv11s            |
-| Epochs                 | 80                  |
-| Image Size             | 640                 |
-| Batch Size             | 16                  |
-| Optimizer              | AdamW               |
-| Initial Learning Rate  | 0.001               |
+| Parameter              | Value                |
+|------------------------|----------------------|
+| Model                  | YOLOv11s             |
+| Epochs                 | 80                   |
+| Image Size             | 640                  |
+| Batch Size             | 16                   |
+| Optimizer              | AdamW                |
+| Initial Learning Rate  | 0.001                |
 | LR Scheduler           | Cosine Learning Rate |
-| Weight Decay           | 0.0005              |
+| Weight Decay           | 0.0005               |
 
 ---
 
@@ -100,11 +102,23 @@ These augmentations help the model adapt to **different lighting conditions, tra
 
 ## Training Performance
 
-Training metrics were logged during training. The best performing checkpoint occurred at:
+Several evaluation curves were generated during training.
 
-> **Epoch 66 — mAP@0.5 ≈ 0.87484**
+### F1–Confidence Curve
 
-Small fluctuations after this point are expected due to stochastic gradient updates, data augmentation randomness, and learning rate scheduling.
+The F1 score represents the balance between precision and recall. The best F1 score occurs around a confidence threshold of approximately **0.36**, reaching around **0.84**, indicating a strong balance between detecting helmets and minimizing false detections.
+
+### Precision–Confidence Curve
+
+This curve shows how detection precision varies with the confidence threshold. Higher confidence thresholds produce more reliable predictions, although fewer detections are made.
+
+### Precision–Recall Curve
+
+The Precision–Recall curve is used to compute **Mean Average Precision (mAP)**. It shows the trade-off between correctly identifying helmets and avoiding false positives.
+
+### Recall–Confidence Curve
+
+Recall decreases as the confidence threshold increases because stricter thresholds reduce the number of predicted detections.
 
 ---
 
@@ -118,9 +132,19 @@ Metrics shown include Box Loss, Classification Loss, DFL Loss, Precision, Recall
 
 ---
 
+## mAP Trend During Training
+
+Training metrics were recorded in a CSV log file. The best performance was achieved at:
+
+> **Epoch 66 — mAP@0.5 ≈ 0.87484**
+
+After this point, the mAP fluctuates slightly due to stochastic optimization, data augmentation randomness, and learning rate adjustments. Such fluctuations are normal during deep learning training.
+
+---
+
 ## Model Evaluation
 
-Evaluation was performed on the validation dataset.
+Evaluation was performed on the **validation dataset**.
 
 ### Overall Metrics
 
@@ -142,11 +166,6 @@ Evaluation was performed on the validation dataset.
 
 The model performs well in detecting **helmet usage**, while overall metrics are affected by class imbalance and dataset complexity.
 
----
-
-## Confusion Matrix
-
-![Confusion Matrix](runs/detect/train/confusion_matrix.png)
 
 ---
 
@@ -192,3 +211,28 @@ helmet-detection-yolo/
 ├── helmet-detect-v11s.pt
 └── README.md
 ```
+
+---
+
+## Limitations
+
+- **Occlusion in crowded scenes** — Riders may partially block each other in dense traffic situations, which can reduce detection accuracy.
+- **Head coverings vs helmets** — Items such as caps, scarves, or hijabs may occasionally be misclassified because they visually resemble helmets.
+- **Top-view camera angles** — Detection accuracy may decrease for top-down surveillance views, as such perspectives are less represented in the dataset.
+- **Dataset bias** — Model performance depends on the diversity of the training data. Underrepresented scenarios may reduce detection accuracy.
+- **Model size constraints** — The system uses **YOLOv11s**, a lightweight model optimized for fast inference. Larger models such as YOLOv11m or YOLOv11l may achieve higher accuracy.
+
+---
+
+## Conclusion
+
+This project successfully demonstrates the use of **YOLOv11s** for real-time helmet detection in traffic scenarios. The trained model achieves a strong **mAP@0.5 of 0.849** on the helmet class, making it reliable for identifying whether motorcycle riders are wearing helmets.
+
+Key takeaways from this project:
+
+- **YOLOv11s** proved to be an efficient and practical choice, delivering solid accuracy without demanding heavy computational resources.
+- Filtering out the `two_wheeler` class during inference significantly improved the clarity and relevance of detection outputs.
+- Data augmentation strategies such as mosaic, MixUp, and HSV color jittering contributed to better generalization across varied real-world conditions.
+- The lower overall metrics compared to per-class helmet metrics highlight the challenge of **class imbalance**, which could be addressed in future iterations.
+
+Overall, this system provides a solid foundation for automated road safety monitoring and can be extended into a production-grade smart city surveillance pipeline.
