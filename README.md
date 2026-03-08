@@ -14,48 +14,44 @@ The model was trained using **YOLOv11s** on a labeled traffic dataset and can be
 
 ---
 
-# Dataset
+## Dataset
 
-## Source
+### Source
 
 The dataset used for this project was obtained from **Roboflow Universe**:
 
-https://universe.roboflow.com/hzhf/helmet-wearing-detection-vweez/dataset/10
+[Helmet Wearing Detection Dataset](https://universe.roboflow.com/hzhf/helmet-wearing-detection-vweez/dataset/10)
 
-## Dataset Split
+### Dataset Split
 
-| Dataset | Images |
-|------|------|
-| Train | 10,494 |
-| Validation | 992 |
-| Test | 512 |
+| Split      | Images |
+|------------|--------|
+| Train      | 10,494 |
+| Validation | 992    |
+| Test       | 512    |
 
-The dataset contains traffic images of riders annotated with bounding boxes.
-
-## Classes in Dataset
+### Classes in Dataset
 
 The original dataset contains three classes:
 
-- Helmet
-- Without Helmet
-- Two Wheeler
+- `Helmet`
+- `Without Helmet`
+- `Two Wheeler`
 
-However, the objective of this project was specifically to detect helmet usage.
-
-The `two_wheeler` class was not required for the final objective and often produced overlapping detections with helmet-related predictions.
+However, the objective of this project was specifically to detect helmet usage. The `two_wheeler` class was not required for the final objective and often produced overlapping detections with helmet-related predictions.
 
 Therefore, during inference the `two_wheeler` class is filtered out so that the system focuses only on:
 
-- Helmet
-- Without Helmet
+- `Helmet`
+- `Without Helmet`
 
 This ensures the detection output directly reflects helmet usage.
 
 ---
 
-# Model Selection
+## Model Selection
 
-## Why YOLOv11s
+### Why YOLOv11s
 
 The **YOLOv11s** model was selected because it provides a good balance between **accuracy and computational efficiency**.
 
@@ -67,28 +63,28 @@ Advantages of YOLOv11s:
 - Suitable for real-time applications
 - Efficient for GPUs with limited VRAM
 
-Larger models such as **YOLOv11m or YOLOv11l** can achieve higher accuracy but require more computational resources.
+> Larger models such as **YOLOv11m** or **YOLOv11l** can achieve higher accuracy but require more computational resources.
 
 ---
 
-# Model Training
+## Model Training
 
 The model was trained using the **Ultralytics YOLO framework**.
 
-| Parameter | Value |
-|------|------|
-| Model | YOLOv11s |
-| Epochs | 80 |
-| Image Size | 640 |
-| Batch Size | 16 |
-| Optimizer | AdamW |
-| Initial Learning Rate | 0.001 |
-| LR Scheduler | Cosine Learning Rate |
-| Weight Decay | 0.0005 |
+| Parameter              | Value               |
+|------------------------|---------------------|
+| Model                  | YOLOv11s            |
+| Epochs                 | 80                  |
+| Image Size             | 640                 |
+| Batch Size             | 16                  |
+| Optimizer              | AdamW               |
+| Initial Learning Rate  | 0.001               |
+| LR Scheduler           | Cosine Learning Rate |
+| Weight Decay           | 0.0005              |
 
 ---
 
-# Data Augmentation
+## Data Augmentation
 
 To improve generalization, the following augmentations were applied during training:
 
@@ -102,86 +98,69 @@ These augmentations help the model adapt to **different lighting conditions, tra
 
 ---
 
-# Training Performance
+## Training Performance
 
-Training metrics were logged during training.
+Training metrics were logged during training. The best performing checkpoint occurred at:
 
-The best performing checkpoint occurred at:
+> **Epoch 66 — mAP@0.5 ≈ 0.87484**
 
-**Epoch 66 — mAP@0.5 ≈ 0.87484**
-
-Small fluctuations after this point are expected due to:
-
-- stochastic gradient updates
-- data augmentation randomness
-- learning rate scheduling
+Small fluctuations after this point are expected due to stochastic gradient updates, data augmentation randomness, and learning rate scheduling.
 
 ---
 
-# Training Curves
+## Training Curves
 
 The following graph shows the training and validation metrics recorded during training.
 
 ![Training Results](runs/detect/train/results.png)
 
-Metrics shown include:
-
-- Box Loss
-- Classification Loss
-- DFL Loss
-- Precision
-- Recall
-- mAP
+Metrics shown include Box Loss, Classification Loss, DFL Loss, Precision, Recall, and mAP.
 
 ---
 
-# Model Evaluation
+## Model Evaluation
 
 Evaluation was performed on the validation dataset.
 
-## Overall Metrics
+### Overall Metrics
 
-| Metric | Value |
-|------|------|
-| Precision | 0.423 |
-| Recall | 0.367 |
-| mAP@0.5 | 0.425 |
-| mAP@0.5:0.95 | 0.217 |
+| Metric        | Value |
+|---------------|-------|
+| Precision     | 0.423 |
+| Recall        | 0.367 |
+| mAP@0.5       | 0.425 |
+| mAP@0.5:0.95  | 0.217 |
 
-## Helmet Class Performance
+### Helmet Class Performance
 
-| Metric | Value |
-|------|------|
-| Precision | 0.846 |
-| Recall | 0.734 |
-| mAP@0.5 | 0.849 |
-| mAP@0.5:0.95 | 0.432 |
+| Metric        | Value |
+|---------------|-------|
+| Precision     | 0.846 |
+| Recall        | 0.734 |
+| mAP@0.5       | 0.849 |
+| mAP@0.5:0.95  | 0.432 |
 
-The model performs well in detecting **helmet usage**, while overall metrics are affected by **class imbalance and dataset complexity**.
+The model performs well in detecting **helmet usage**, while overall metrics are affected by class imbalance and dataset complexity.
 
 ---
 
-# Confusion Matrix
-
-The confusion matrix shows the model's classification performance across different classes.
+## Confusion Matrix
 
 ![Confusion Matrix](runs/detect/train/confusion_matrix.png)
 
 ---
 
-# Sample Predictions
+## Sample Predictions
 
-Example detections produced by the trained model.
+![Prediction 1](results/img1.png)
 
-![Prediction](results\img1.png)
-
-![Prediction](results\img2.png)
+![Prediction 2](results/img2.png)
 
 Bounding boxes indicate detected objects and their predicted class labels.
 
 ---
 
-# Technologies Used
+## Technologies Used
 
 - Python
 - Ultralytics YOLOv11
@@ -192,4 +171,24 @@ Bounding boxes indicate detected objects and their predicted class labels.
 
 ---
 
-# Project Structure
+## Project Structure
+```
+helmet-detection-yolo/
+│
+├── results/
+│   ├── img1.png
+│   └── img2.png
+│
+├── runs/
+│   └── detect/
+│       └── train/
+│           ├── results.png
+│           ├── confusion_matrix.png
+│           └── weights/
+│               └── best.pt
+│
+├── app.py
+├── dataset.yaml
+├── helmet-detect-v11s.pt
+└── README.md
+```
