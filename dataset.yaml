@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 3
+names: ['helmet', 'two_wheeler', 'without_helmet']
+
+roboflow:
+  workspace: hzhf
+  project: helmet-wearing-detection-vweez
+  version: 10
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/hzhf/helmet-wearing-detection-vweez/dataset/10
