@@ -12,7 +12,7 @@ The model was trained using **YOLOv11s** on a labeled traffic dataset and can be
 - Road safety enforcement
 - Smart city surveillance systems
 
----
+----
 
 ## Dataset
 
